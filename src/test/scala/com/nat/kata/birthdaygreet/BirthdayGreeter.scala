@@ -11,5 +11,12 @@ object BirthdayGreeter {
       case _ => None
     }
 
+  def replace(template: String, replacements: List[Replacement]): String =
+    replacements.foldLeft(template) { (replaced, curr) =>
+      replaced.replaceAll(curr.matcher, curr.value)
+    }
+
   case class Friend(lastName: String, firstName: String, birthday: String, email: String)
+
+  case class Replacement(matcher: String, value: String)
 }
