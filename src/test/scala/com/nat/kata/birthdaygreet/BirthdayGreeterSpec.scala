@@ -47,9 +47,49 @@ class BirthdayGreeterSpec extends FreeSpec with Matchers {
     "should return new replaced string even there is more than 1 replacements" in {
       val template = "hello my name is {name} {lastname}"
       val nameReplacement = Replacement("{name}", "john")
-      val lastnameReplacement = Replacement("{lastname}", "doe")
+      val lastNameReplacement = Replacement("{lastname}", "doe")
 
-      replace(template, List(nameReplacement, lastnameReplacement)) shouldBe "hello my name is john doe"
+      replace(template, List(nameReplacement, lastNameReplacement)) shouldBe "hello my name is john doe"
     }
   }
+
+  "fillEmailTemplate" - {
+
+    "should send email to someone" in {
+      val template =
+        """Subject: Happy birthday!
+          |Happy birthday, dear <first_name>!""".stripMargin
+      val friend = Friend("Doe", "John", "1982/10/08", "john.doe@foobar.com")
+      val expected =
+        """Subject: Happy birthday!
+          |Happy birthday, dear John!""".stripMargin
+
+      fillEmailTemplate(template, friend) shouldBe expected
+    }
+  }
+
+  "checkIsBirthday" - {
+    "should return no one" in {
+      val friends = List(
+        Friend("Doe", "John", "1982/10/08", "john.doe@foobar.com"),
+        Friend("Ann", "Mary", "1975/09/11", "mary.ann@foobar.com")
+      )
+      val date = "2000/01/01"
+      val expected = Nil
+
+      checkIsBirthday(date, friends) shouldBe expected
+    }
+
+    "should return someone with birthday on specified date" in {
+      val friends = List(
+        Friend("Doe", "John", "1982/10/08", "john.doe@foobar.com"),
+        Friend("Ann", "Mary", "1975/09/11", "mary.ann@foobar.com")
+      )
+      val date = "2000/10/08"
+      val expected = List(Friend("Doe", "John", "1982/10/08", "john.doe@foobar.com"))
+
+      checkIsBirthday(date, friends) shouldBe expected
+    }
+  }
+
 }
